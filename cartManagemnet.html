@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Cart</h1>
+        <div class="product-form">
+            <input type="text" id="productId" placeholder="Product ID" />
+            <input type="text" id="productName" placeholder="Product Name" />
+            <input type="number" id="productPrice" placeholder="Product Price" />
+            <input type="number" id="productQuantity" placeholder="Quantity" />
+            <button id="addProductBtn" onclick="handleAddProduct()">Add Product</button>
+        </div>
+
+        <div class="cart">
+            <h2>Cart Details</h2>
+            <div id="cartItems"></div>
+            <p class="total" id="totalPrice">Total: $0</p>
+        </div>
+    </div>
+
+    <script>
+        var cartitems = [];
+
+        function handleAddProduct() {
+            var items = {
+                productId: "",
+                productName: "",
+                productPrice: "",
+                productQuantity: "",
+            };
+            for (var a in items) {
+                items[a] = document.getElementById(a).value;
+            }
+            addProduct(items);
+            clearAddProducts();
+            updateCart();
+        }
+
+        function clearAddProducts() {
+            var items = {
+                productId: "",
+                productName: "",
+                productPrice: "",
+                productQuantity: "",
+            };
+            for (var a in items) {
+                document.getElementById(a).value = "";
+            }
+        }
+
+        function addProduct(item) {
+            
+            let isProductFound = false;
+
+            cartitems.forEach(function(cartItem) {
+                if (cartItem.productId === item.productId) {
+                    cartItem.productQuantity = parseInt(cartItem.productQuantity) + parseInt(item.productQuantity);
+                    isProductFound = true;
+                }
+            });
+
+            if (!isProductFound) {
+                cartitems.push(item);
+                console.log(cartitems)
+            }
+            
+        }
+
+        function removeProduct(productId) {
+            cartitems.forEach(function(cartItem, index) {
+                if (cartItem.productId === productId) {
+                    cartitems.splice(index, 1);
+                }
+            });
+
+            updateCart();
+        }
+
+        function updateCart() {
+            var cartItemsContainer = document.getElementById("cartItems");
+            cartItemsContainer.innerHTML = ""; 
+            var total = 0;
+
+            cartitems.forEach(function(item) {
+                var productElement = document.createElement("div");
+                productElement.classList.add("cart-item");
+                productElement.innerHTML = `
+                    <p>Product ID: ${item.productId}</p>
+                    <p>Product Name: ${item.productName}</p>
+                    <p>Price: $${item.productPrice}</p>
+                    <p>Quantity: ${item.productQuantity}</p>
+                    <button onclick="removeProduct('${item.productId}')">Remove</button>
+                `;
+                cartItemsContainer.appendChild(productElement);
+                total += parseFloat(item.productPrice) * parseInt(item.productQuantity);
+            });
+            
+            document.getElementById("totalPrice").textContent = `Total: $${total}`;
+        }
+
+
+    </script>
+</body>
+</html>

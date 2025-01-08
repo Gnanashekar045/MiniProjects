@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Address Book</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 50%;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-group label {
+      display: block;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .contact-list {
+      margin-top: 20px;
+    }
+    .contact-list li {
+      list-style: none;
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .actions button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Digital Address Book</h2>
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" id="name" placeholder="Enter name">
+  </div>
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="Enter email">
+  </div>
+  <button onclick="addContact()">Add Contact</button>
+
+  <h3>Search Contacts</h3>
+  <input type="text" id="search" placeholder="Search by name or email" onkeyup="searchContacts()">
+
+  <h3>Contact List</h3>
+  <ul class="contact-list" id="contactList"></ul>
+</div>
+
+<script>
+  let contacts = [];
+
+  function addContact() {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    if (name && email) {
+      contacts.push({ id: Date.now(), name, email });
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      displayContacts(contacts);
+    } else {
+      alert('Please enter both name and email');
+    }
+  }
+
+  function displayContacts(contactArray) {
+    const contactList = document.getElementById('contactList');
+    contactList.innerHTML = '';
+    contactArray.forEach(contact => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span>${contact.name} - ${contact.email}</span>
+        <div class="actions">
+          <button onclick="editContact(${contact.id})">Edit</button>
+          <button onclick="deleteContact(${contact.id})">Delete</button>
+        </div>
+      `;
+      contactList.appendChild(li);
+    });
+  }
+
+  function editContact(id) {
+    const contact = contacts.find(contact => contact.id === id);
+    if (contact) {
+      const newName = prompt('Edit name:', contact.name);
+      const newEmail = prompt('Edit email:', contact.email);
+      if (newName && newEmail) {
+        contact.name = newName;
+        contact.email = newEmail;
+        displayContacts(contacts);
+      }
+    }
+  }
+
+  function deleteContact(id) {
+    contacts = contacts.filter(contact => contact.id !== id);
+    displayContacts(contacts);
+  }
+
+  function searchContacts() {
+    const query = document.getElementById('search').value.toLowerCase();
+    const filteredContacts = contacts.filter(contact => 
+      contact.name.toLowerCase().includes(query) || 
+      contact.email.toLowerCase().includes(query)
+    );
+    displayContacts(filteredContacts);
+  }
+
+  
+</script>
+
+</body>
+</html>
