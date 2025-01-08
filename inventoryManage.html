@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 50%;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .form-group label {
+      display: block;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      border: none;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    .product-list {
+      margin-top: 20px;
+    }
+    .product-list li {
+      list-style: none;
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Inventory Management System</h2>
+  <div class="form-group">
+    <label for="productID">Product ID</label>
+    <input type="text" id="productID" placeholder="Enter product ID">
+  </div>
+  <div class="form-group">
+    <label for="productName">Product Name</label>
+    <input type="text" id="productName" placeholder="Enter product name">
+  </div>
+  <div class="form-group">
+    <label for="productQuantity">Quantity</label>
+    <input type="number" id="productQuantity" placeholder="Enter quantity">
+  </div>
+  <button onclick="addProduct()">Add Product</button>
+  <button onclick="removeProduct()">Remove Product</button>
+  <button onclick="updateProduct()">Update Product</button>
+
+  <h3>Product List</h3>
+  <ul class="product-list" id="productList"></ul>
+</div>
+
+<script>
+  const inventory = {};
+
+  function addProduct() {
+    const id = document.getElementById('productID').value;
+    const name = document.getElementById('productName').value;
+    const quantity = parseInt(document.getElementById('productQuantity').value);
+
+    if (id && name && quantity >= 0) {
+      if (!inventory[id]) {
+        inventory[id] = { name, quantity };
+        displayProducts();
+        alert('Product added successfully!');
+      } else {
+        alert('Product ID already exists.');
+      }
+    } else {
+      alert('Please enter valid product details.');
+    }
+  }
+
+  function removeProduct() {
+    const id = document.getElementById('productID').value;
+    if (inventory[id]) {
+      delete inventory[id];
+      displayProducts();
+      alert('Product removed successfully!');
+    } else {
+      alert('Product ID not found.');
+    }
+  }
+
+  function updateProduct() {
+    const id = document.getElementById('productID').value;
+    const quantity = parseInt(document.getElementById('productQuantity').value);
+
+    if (inventory[id] && quantity >= 0) {
+      inventory[id].quantity = quantity;
+      displayProducts();
+      alert('Product updated successfully!');
+    } else {
+      alert('Please enter a valid Product ID and quantity.');
+    }
+  }
+
+  function displayProducts() {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+
+    Object.keys(inventory).forEach(id => {
+      const product = inventory[id];
+      const li = document.createElement('li');
+      li.textContent = `ID: ${id}, Name: ${product.name}, Quantity: ${product.quantity}`;
+      productList.appendChild(li);
+    });
+  }
+</script>
+
+</body>
+</html>
