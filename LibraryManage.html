@@ -36,13 +36,11 @@
   <div>
     <h1>Library Management System</h1>
 
-    <!-- Add Book Form -->
     <h3>Add Book</h3>
     <input type="text" id="title" placeholder="Book Title" required>
     <input type="text" id="author" placeholder="Book Author" required>
     <button type="button" onclick="addBook()">Add Book</button>
 
-    <!-- Book List -->
     <div class="book-list">
       <h3>Books in Library</h3>
       <ul id="bookList"></ul>
@@ -56,19 +54,17 @@
       const title = document.getElementById("title").value.trim();
       const author = document.getElementById("author").value.trim();
 
-      if (title && author) {
-        const newBook = { title, author, isAvailable: true };
-        books.push(newBook);
-        listBooks();
-        clearInputs();
-      } else {
-        alert("Please fill in both fields.");
+      if(title && author) {
+        const newBook = {title, author, isAvailable: true};
+        books.push(newBook)
+        clearInput()
+        listBooks() 
       }
     }
 
-    function clearInputs() {
+    function clearInput() {
       document.getElementById("title").value = "";
-      document.getElementById("author").value = "";
+      document.getElementById("title").value = "";
     }
 
     function listBooks() {
@@ -78,33 +74,35 @@
       books.forEach((book, index) => {
         const listItem = document.createElement("li");
         const bookDetails = Object.entries(book)
-          .map(([key, value]) => `${key}: ${value}`)
-          .join(", ");
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(",")
 
         listItem.innerHTML = `${bookDetails}
-          <button onclick="lendBook(${index})" ${!book.isAvailable ? 'disabled' : ''}>Lend</button>
-          <button onclick="returnBook(${index})" ${book.isAvailable ? 'disabled' : ''}>Return</button>`;
-        bookList.appendChild(listItem);
-      });
+           <button onclick="lendBook(${index})" ${!book.isAvailable ? 'disabled' : ''}>Lend</button>
+           <button onclick="returnBook(${index})" ${book.isAvailable ? 'disabled' : ''}>Return</button>
+        `;  
+        bookList.appendChild(listItem)
+      })
     }
-    
+
     function lendBook(index) {
-      if (books[index].isAvailable) {
+      if(books[index].isAvailable) {
         books[index].isAvailable = false;
-        listBooks();
+        listBooks()
       } else {
-        alert("This book is already lent out.");
+        alert("this book is already lent out")
       }
     }
 
     function returnBook(index) {
-      if (!books[index].isAvailable) {
-        books[index].isAvailable = true;
-        listBooks();
+      if(!books[index].isAvailable) {
+        books[index].isAvailable = true
+        listBooks()
       } else {
-        alert("This book is already available.");
+        alert("this book is already available")
       }
     }
+
   </script>
 
 </body>
