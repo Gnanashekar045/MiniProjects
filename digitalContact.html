@@ -77,17 +77,13 @@
     const email = document.getElementById('email').value;
     if (name && email) {
       contacts.push({ id: Date.now(), name, email });
-      document.getElementById('name').value = '';
-      document.getElementById('email').value = '';
       displayContacts(contacts);
-    } else {
-      alert('Please enter both name and email');
-    }
+    } 
   }
 
   function displayContacts(contactArray) {
-    const contactList = document.getElementById('contactList');
-    contactList.innerHTML = '';
+    const ul = document.getElementById('contactList');
+    ul.innerHTML = '';
     contactArray.forEach(contact => {
       const li = document.createElement('li');
       li.innerHTML = `
@@ -97,7 +93,7 @@
           <button onclick="deleteContact(${contact.id})">Delete</button>
         </div>
       `;
-      contactList.appendChild(li);
+      ul.appendChild(li);
     });
   }
 

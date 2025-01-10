@@ -1,64 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <div class="containner">
         <h1>User Management</h1>
-        
-        <input type="text " id="name" placeholder="Name" required><br>
-        <input type="email" id="email" placeholder="Email" required><br>
-        <label for="role">role</label><br>
-        <select id="role">
-            <option value="Subcriber">Subcriber</option>
-            <option value="Admin">Admin</option>
-        </select>
-        <button type="button" onclick="handleInput()">Add User</button>
-        <ul id="userList"></ul>
+
+        <form id="userForm">
+            <input type="text " id="name" placeholder="Name" required><br>
+            <input type="email" id="email" placeholder="Email" required><br>
+            <label for="role">role</label><br>
+            <select id="role">
+                <option value="Subcriber">Subcriber</option>
+                <option value="Admin">Admin</option>
+            </select>
+            <button type="button" onclick="addUser()">Add User</button>
+            <ul id="userList"></ul>
+        </form>
     </div>
 
     <script>
         let users = []
 
-        function handleInput() {
-            var user = {
-                name: "",
-                email: "",
-                role: "",
-            }
-            for(a in user) {
-                user[a] = document.getElementById(a).value
-            }
-            users.push(user)
-            clearInput() 
-            readUsers() 
-        }
+        function addUser() {
+            var name = document.getElementById("name").value
+            var email = document.getElementById("email").value
+            var role = document.getElementById("role").value
 
-        function clearInput() {
-            var user = {
-                name: "",
-                email: "",
-                role: "",
-            }
-            for(a in user) {
-                document.getElementById(a).value = "";
+            if (name && email && role) {
+                let newUser = { name, email, role }
+                users.push(newUser);
+                displayUser()
+                document.getElementById("userForm").reset()
             }
         }
 
-        function readUsers() {
-            const userList = document.getElementById("userList");
-            userList.innerHTML = "",
+        function displayUser() {
+            const ul = document.getElementById("userList");
+            ul.innerHTML = "";
 
-            users.forEach((userd) => {
-                const itemList = document.createElement("li");
-                itemList.innerHTML = `<strong>${userd.name}</strong><br> ${userd.email}<br> ${userd.role}`
-                userList.appendChild(itemList)
+            users.forEach(user => {
+                const li = document.createElement("li");
+                li.innerHTML = `Name: ${user.name}<br> Email: ${user.email}<br> Role: ${user.role}`
+                ul.appendChild(li)
             })
-            
         }
     </script>
 </body>
+
 </html>
