@@ -1,0 +1,87 @@
+<script>
+  let books = [];
+
+  function addBook() {
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+
+    if (title && author) {
+      const newBook = { title, author, isAvailable: true };
+      books.push(newBook);
+      listBooks();
+      listAvailableBooks(); 
+      clearInput();
+    }
+  }
+
+  function clearInput() {
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+  }
+
+  function listBooks() {
+    const bookList = document.getElementById("bookList");
+    bookList.innerHTML = "";
+
+    // Sort books alphabetically by title
+    books.sort((a, b) => a.title.localeCompare(b.title));
+
+    books.forEach((book, index) => {
+      const listItem = document.createElement("li");
+      const bookDetail = `Title: ${book.title}, Author: ${book.author}, Available: ${book.isAvailable}`;
+
+      listItem.innerHTML = `
+        ${bookDetail}
+        <button onclick="lendBook(${index})" ${!book.isAvailable ? 'disabled' : ''}>Lend Book</button>
+        <button onclick="returnBook(${index})" ${book.isAvailable ? 'disabled' : ''}>Return Book</button>
+      `;
+      bookList.appendChild(listItem);
+    });
+  }
+
+  function listAvailableBooks() {
+    const availableBookList = document.getElementById("availableBookList");
+    availableBookList.innerHTML = "";
+
+    // Filter and sort available books
+    const availableBooks = books.filter(book => book.isAvailable).sort((a, b) => a.title.localeCompare(b.title));
+
+    availableBooks.forEach(book => {
+      const listItem = document.createElement("li");
+      listItem.textContent = `Title: ${book.title}, Author: ${book.author}`;
+      availableBookList.appendChild(listItem);
+    });
+  }
+
+  function lendBook(index) {
+    if (books[index].isAvailable) {
+      const book = books.splice(index, 1)[0];
+      book.isAvailable = false;
+      books.splice(index, 0, book);
+      listBooks();
+      listAvailableBooks(); // Update the available books list after lending a book
+    }
+  }
+
+  function returnBook(index) {
+    if (!books[index].isAvailable) {
+      const book = books.splice(index, 1)[0];
+      book.isAvailable = true;
+      books.splice(index, 0, book);
+      listBooks();
+      listAvailableBooks(); // Update the available books list after returning a book
+    }
+  }
+
+  function findBook() {
+    const searchTitle = document.getElementById("searchTitle").value.trim().toLowerCase();
+    const foundBook = books.find(book => book.title.toLowerCase() === searchTitle);
+
+    const foundBookElement = document.getElementById("foundBook");
+    if (foundBook) {
+      foundBookElement.textContent = `Found: Title: ${foundBook.title}, Author: ${foundBook.author}, Available: ${foundBook.isAvailable}`;
+    } else {
+      foundBookElement.textContent = "Book not found.";
+    }
+  }
+</script>

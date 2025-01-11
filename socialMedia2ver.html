@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Post Editor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .post {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    textarea, input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Social Media Post Editor</h1>
+  <input type="text" id="newPostContent" placeholder="Write a new post..." />
+  <button onclick="addNewPost()">Add Post</button>
+  <input type="text" id="searchInput" placeholder="Search posts..." oninput="searchPosts()" />
+  <div id="postContainer"></div>
+
+  <script>
+    let posts = [
+      { content: "Welcome to my blog!", likes: 0, comments: [], date: new Date() }
+    ];
+
+    function renderPosts(postsToRender = posts) {
+      document.getElementById("postContainer").innerHTML = '';
+      postsToRender.forEach((post, index) => {
+        document.getElementById("postContainer").innerHTML += `
+          <div class="post">
+            <textarea onchange="editPost(${index}, this.value)">${post.content}</textarea>
+            <button onclick="likePost(${index})">Like ${post.likes}</button>
+            <input type="text" id="commentInput${index}" placeholder="Add comments" />
+            <button onclick="addComment(${index})">Add Comment</button>
+            <button onclick="clonePost(${index})">Clone Post</button>
+            <div>
+              <strong>Comments</strong>
+              ${post.comments.map((c, i) => `<p>${i + 1}. ${c}</p>`).join("")}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addNewPost() {
+      const newPostContent = document.getElementById("newPostContent").value;
+      if (newPostContent) {
+        posts.push({ content: newPostContent, likes: 0, comments: [], date: new Date() });
+        document.getElementById("newPostContent").value = '';
+        renderPosts();
+      }
+    }
+
+    function likePost(index) {
+      posts[index].likes++;
+      renderPosts();
+    }
+
+    function addComment(index) {
+      const commentInput = document.getElementById(`commentInput${index}`);
+      if (commentInput.value) {
+        posts[index].comments.push(commentInput.value);
+        commentInput.value = '';
+        renderPosts();
+      }
+    }
+
+    function editPost(index, newContent) {
+      posts[index].content = newContent;
+      renderPosts();
+    }
+
+    function clonePost(index) {
+      const newPost = { ...posts[index], date: new Date() };
+      posts.push(newPost);
+      renderPosts();
+    }
+
+    function searchPosts() {
+      const keyword = document.getElementById("searchInput").value.toLowerCase();
+      const filteredPosts = posts.filter(post => post.content.toLowerCase().includes(keyword));
+      renderPosts(filteredPosts);
+    }
+
+    renderPosts();
+  </script>
+</body>
+</html>
