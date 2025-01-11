@@ -32,79 +32,42 @@
                 const role = document.getElementById("role").value;
 
                 if (name && email && role) {
-                    if (isEmailExist(email)) {
-                        alert("This email already exists.");
+
+                    if(isEmailExist(email)) {
+                        alert("this email id is already existing");
                         return;
                     }
 
-                    if (emailValidation(email)) {
-                        let newUser = { name, email, role };
-                        users.push(newUser);
-                        sortUsersByName();
-                        displayUsers();
-
-                        if (allUsersHaveValidEmails()) {
-                            alert("All users have valid emails.");
-                        } else {
-                            alert("Some users have invalid emails.");
-                        }
-
-                        document.getElementById("userForm").reset();
-                    } else {
-                        alert("Please enter a valid email address.");
-                    }
+                    let newUser = { name, email, role };
+                    users.push(newUser)
+                    displayUser()
                 }
             }
 
-            function isEmailExist(email) {
-                return users.some(user => user.email === email);
-            }
-
-            function emailValidation(email) {
-                const emailRegex = /\S+@\S+\.\S+/;
-                return emailRegex.test(email);
-            }
-
-            function sortUsersByName() {
-                users.sort((a, b) => a.name.localeCompare(b.name));
-            }
-
-            function displayUsers() {
+            function displayUser() {
                 const ul = document.getElementById("userList");
                 ul.innerHTML = "";
 
                 users.forEach(user => {
                     const li = document.createElement("li");
                     li.innerHTML = `
-                        Name: ${user.name}<br> 
-                        Email: ${user.email}<br>
-                        Role: ${user.role}<br>
-                        <button onclick="deleteUser('${user.email}')">Delete</button>
-                        <button onclick="editUser('${user.email}')">Edit</button>
+                            Name: ${user.name}<br> Email: ${user.email}<br> Role: ${user.role}
+                            <button onclick="deleteUser('${user.email}')">Delete</button>
+                            <button onclick="editUser('${user.email}')">Edit</button>
                     `;
-                    ul.appendChild(li);
-                });
+                    ul.appendChild(li)
+                })
             }
 
-            function deleteUser(email) {
-                users = users.filter(user => user.email !== email);
-                displayUsers();
+            function isEmailExist(email) {
+                return users.some(user => user.email === email);
             }
 
-            function editUser(email) {
-                const user = users.find(user => user.email === email);
-                if (user) {
-                    document.getElementById("name").value = user.name;
-                    document.getElementById("email").value = user.email;
-                    document.getElementById("role").value = user.role;
-
-                    deleteUser(email);
-                }
+            function emailValidation() {
+                const emailPatturn = /\S+@\S+\.\S+/;
+                return emailPatturn.test()
             }
 
-            function allUsersHaveValidEmails() {
-                return users.every(user => emailValidation(user.email));
-            }
         </script>
     </div>
 </body>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Cart</h1>
+        <form id="form">
+            <div id="product-form">
+                <input type="text" id="productId" placeholder="Product ID" />
+                <input type="text" id="productName" placeholder="Product Name" />
+                <input type="number" id="productPrice" placeholder="Product Price" />
+                <input type="number" id="productQuantity" placeholder="Quantity" />
+                <button type="button" id="addProductBtn" onclick="handleAddProduct()">Add Product</button>
+            </div>
+
+            <div class="cart">
+                <h2>Cart Details</h2>
+                <div id="cartItems"></div>
+                <p class="total" id="totalPrice">Total: $0</p>
+                <button type="button" onclick="listAllProductIds()">List All Product IDs</button>
+                <div id="productIdsList"></div>
+                <button type="button" onclick="displayProductDetails()">Display Product Details</button>
+                <div id="productDetailsList"></div>
+                <button type="button" onclick="createCartSnapshot()">Create Cart Snapshot</button>
+                <div id="cartSnapshot"></div>
+                <button type="button" onclick="sortCartByName()">Sort Cart Alphabetically</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        var cartitems = [];
+
+        function handleAddProduct() {
+            var items = {
+                productId: document.getElementById("productId").value,
+                productName: document.getElementById("productName").value,
+                productPrice: document.getElementById("productPrice").value,
+                productQuantity: document.getElementById("productQuantity").value,
+            };
+
+            var productIds = cartitems.map(item => item.productId);
+            if (productIds.includes(items.productId)) {
+                cartitems.forEach(cartItem => {
+                    if (cartItem.productId === items.productId) {
+                        cartItem.productQuantity = parseInt(cartItem.productQuantity) + parseInt(items.productQuantity);
+                    }
+                });
+            } else {
+                cartitems.push(items);
+            }
+
+            document.getElementById("form").reset();
+            updateCart();
+        }
+
+        function updateCart() {
+            cartitems.sort((a, b) => a.productName.localeCompare(b.productName));
+
+            var cartItemsContainer = document.getElementById("cartItems");
+            cartItemsContainer.innerHTML = "";
+
+            cartitems.forEach(function(item) {
+                var productElement = document.createElement("div");
+                productElement.classList.add("cart-item");
+                productElement.innerHTML = `
+                    <p>Product ID: ${item.productId}</p>
+                    <p>Product Name: ${item.productName}</p>
+                    <p>Price: $${item.productPrice}</p>
+                    <p>Quantity: ${item.productQuantity}</p>
+                    <button onclick="removeProduct('${item.productId}')">Remove</button>
+                `;
+                cartItemsContainer.appendChild(productElement);
+            });
+
+            var total = cartitems.reduce((acc, item) => acc + (parseFloat(item.productPrice) * parseInt(item.productQuantity)), 0);
+            document.getElementById("totalPrice").textContent = `Total: $${total}`;
+        }
+
+        function removeProduct(productId) {
+            cartitems = cartitems.filter(item => item.productId !== productId);
+            updateCart();
+        }
+
+        function listAllProductIds() {
+            var productIdsObj = {};
+            cartitems.forEach(item => {
+                productIdsObj[item.productId] = true;
+            });
+
+            var productIdsArray = Object.keys(productIdsObj);
+            var productIdsListContainer = document.getElementById("productIdsList");
+            productIdsListContainer.innerHTML = `<p>Product IDs: ${productIdsArray.join(', ')}</p>`;
+        }
+
+        function displayProductDetails() {
+            var productDetailsContainer = document.getElementById("productDetailsList");
+            productDetailsContainer.innerHTML = "";
+
+            cartitems.forEach(item => {
+                var productDetails = Object.entries(item);
+                var detailsElement = document.createElement("div");
+                detailsElement.classList.add("product-details");
+                
+                productDetails.forEach(([key, value]) => {
+                    var detail = document.createElement("p");
+                    detail.textContent = `${key}: ${value}`;
+                    detailsElement.appendChild(detail);
+                });
+
+                productDetailsContainer.appendChild(detailsElement);
+            });
+        }
+
+        function createCartSnapshot() {
+            var cartSnapshot = cartitems.slice();
+            var snapshotContainer = document.getElementById("cartSnapshot");
+            snapshotContainer.innerHTML = "<h3>Cart Snapshot</h3>";
+
+            cartSnapshot.forEach(item => {
+                var snapshotElement = document.createElement("div");
+                snapshotElement.classList.add("cart-snapshot-item");
+                snapshotElement.innerHTML = `
+                    <p>Product ID: ${item.productId}</p>
+                    <p>Product Name: ${item.productName}</p>
+                    <p>Price: $${item.productPrice}</p>
+                    <p>Quantity: ${item.productQuantity}</p>
+                `;
+                snapshotContainer.appendChild(snapshotElement);
+            });
+        }
+
+        function sortCartByName() {
+            updateCart(); 
+        }
+    </script>
+</body>
+</html>
