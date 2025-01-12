@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Management</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>User Management</h1>
+
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Name" required><br>
+            <input type="email" id="email" placeholder="Email" required><br>
+            <label for="role">Role:</label><br>
+            <select id="role">
+                <option value="Subscriber">Subscriber</option>
+                <option value="Admin">Admin</option>
+            </select><br>
+            <button type="button" onclick="addUser()">Add User</button>
+            <ul id="userList"></ul>
+        </form>
+
+        <script>
+            let users = [];
+
+            function addUser() {
+                const name = document.getElementById("name").value;
+                const email = document.getElementById("email").value;
+                const role = document.getElementById("role").value;
+
+                if (name && email && role) {
+                    if (isEmailExist(email)) {
+                        alert("This email already exists.");
+                        return;
+                    }
+
+                    if (emailValidation(email)) {
+                        let newUser = { name, email, role };
+                        users.push(newUser);
+                        displayUsers();
+
+                        // Use every() to check if all emails are valid
+                        if (allUsersHaveValidEmails()) {
+                            alert("All users have valid emails.");
+                        } else {
+                            alert("Some users have invalid emails.");
+                        }
+
+                        document.getElementById("userForm").reset();
+                    } else {
+                        alert("Please enter a valid email address.");
+                    }
+                }
+            }
+
+            function isEmailExist(email) {
+                return users.some(user => user.email === email);
+            }
+
+            function emailValidation(email) {
+                const emailRegex = /\S+@\S+\.\S+/;
+                return emailRegex.test(email);
+            }
+
+            function displayUsers() {
+                const ul = document.getElementById("userList");
+                ul.innerHTML = "";
+
+                // Sort users by name before displaying
+                users.sort((a, b) => a.name.localeCompare(b.name));
+
+                users.forEach(user => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        Name: ${user.name}<br> 
+                        Email: ${user.email}<br>
+                        Role: ${user.role}<br>
+                        <button onclick="deleteUser('${user.email}')">Delete</button>
+                        <button onclick="editUser('${user.email}')">Edit</button>
+                    `;
+                    ul.appendChild(li);
+                });
+            }
+
+            function deleteUser(email) {
+                users = users.filter(user => user.email !== email);
+                displayUsers();
+            }
+
+            function editUser(email) {
+                const user = users.find(user => user.email === email);
+                if (user) {
+                    document.getElementById("name").value = user.name;
+                    document.getElementById("email").value = user.email;
+                    document.getElementById("role").value = user.role;
+
+                    deleteUser(email);
+                }
+            }
+
+            // Function using every() to check email validity for all users
+            function allUsersHaveValidEmails() {
+                return users.every(user => emailValidation(user.email));
+            }
+        </script>
+    </div>
+</body>
+
+</html>
