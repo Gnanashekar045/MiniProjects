@@ -31,43 +31,27 @@
                 const email = document.getElementById("email").value;
                 const role = document.getElementById("role").value;
 
-                if (name && email && role) {
-
-                    if(isEmailExist(email)) {
-                        alert("this email id is already existing");
-                        return;
-                    }
-
-                    let newUser = { name, email, role };
+                if(name && email && role) {
+                    let newUser = {name, email, role};
                     users.push(newUser)
-                    displayUser()
                 }
             }
 
             function displayUser() {
                 const ul = document.getElementById("userList");
-                ul.innerHTML = "";
+                ul.innerHTML = '';  
 
                 users.forEach(user => {
                     const li = document.createElement("li");
                     li.innerHTML = `
-                            Name: ${user.name}<br> Email: ${user.email}<br> Role: ${user.role}
-                            <button onclick="deleteUser('${user.email}')">Delete</button>
-                            <button onclick="editUser('${user.email}')">Edit</button>
+                    
                     `;
-                    ul.appendChild(li)
                 })
-            }
 
-            function isEmailExist(email) {
-                return users.some(user => user.email === email);
-            }
 
-            function emailValidation() {
-                const emailPatturn = /\S+@\S+\.\S+/;
-                return emailPatturn.test()
-            }
 
+
+            }
         </script>
     </div>
 </body>

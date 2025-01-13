@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Post Editor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 600px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .post-editor {
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    .post-editor input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+
+    .post-editor button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .post-editor button:hover {
+      background-color: #0056b3;
+    }
+
+    .post-list {
+      margin-top: 20px;
+    }
+
+    .post {
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .post-actions button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .post-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .post-content {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Social Media Post Editor</h1>
+
+    <div class="post-editor">
+      <input type="text" id="postContent" placeholder="Write a new post...">
+      <button onclick="handleAddPost()">Add Post</button>
+    </div>
+
+    <div class="post-editor">
+      <input type="text" id="searchKeyword" placeholder="Search posts...">
+      <button onclick="handleSearchPosts()">Search</button>
+    </div>
+
+    <div id="postList" class="post-list"></div>
+  </div>
+
+  <script>
+    let posts = [
+      {
+        id: 1,
+        content: "Welcome to our Social Media App!",
+        likes: 0,
+        comments: [],
+        date: new Date('2025-01-01')
+      }
+    ];
+
+    // Function to render posts
+    function renderPosts(filteredPosts = posts) {
+      const postList = document.getElementById('postList');
+      postList.innerHTML = '';
+
+      filteredPosts.forEach(post => {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+        postElement.innerHTML = `
+          <div class="post-content">${post.content}</div>
+          <div class="post-actions">
+            <button onclick="handleLikePost(${post.id})">Like (${post.likes})</button>
+            <button onclick="handleClonePost(${post.id})">Clone</button>
+            <button onclick="handleEditPost(${post.id})">Edit</button>
+            <button onclick="handleAddComment(${post.id})">Comment</button>
+          </div>
+        `;
+        postList.appendChild(postElement);
+      });
+    }
+
+    // Handle adding a new post
+    function handleAddPost() {
+      const postContent = document.getElementById('postContent').value;
+      if (postContent.trim()) {
+        addPost(postContent);
+        document.getElementById('postContent').value = '';
+      }
+      renderPosts();
+    }
+
+    // Add a new post
+    function addPost(content) {
+      posts.push({
+        id: posts.length + 1,
+        content,
+        likes: 0,
+        comments: [],
+        date: new Date()
+      });
+    }
+
+    // Like a post
+    function handleLikePost(id) {
+      let post = posts.find(post => post.id === id);
+      if (post) {
+        post.likes++;
+      }
+      renderPosts();
+    }
+
+    // Clone a post
+    function handleClonePost(id) {
+      let post = posts.find(post => post.id === id);
+      if (post) {
+        let clonedPost = { ...post, id: posts.length + 1, date: new Date() };
+        posts.push(clonedPost);
+      }
+      renderPosts();
+    }
+
+    // Edit a post
+    function handleEditPost(id) {
+      let post = posts.find(post => post.id === id);
+      if (post) {
+        let newContent = prompt("Edit the post content:", post.content);
+        if (newContent !== null) {
+          post.content = newContent;
+        }
+      }
+      renderPosts();
+    }
+
+    // Add a comment
+    function handleAddComment(id) {
+      let comment = prompt("Enter your comment:");
+      if (comment) {
+        let post = posts.find(post => post.id === id);
+        if (post) {
+          post.comments.push(comment);
+        }
+      }
+      renderPosts();
+    }
+
+    // Search posts by keyword
+    function handleSearchPosts() {
+      const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+      const filteredPosts = posts.filter(post => post.content.toLowerCase().includes(keyword));
+      renderPosts(filteredPosts);
+    }
+
+    // Check if any post has comments
+    function checkPostsHaveComments() {
+      return posts.some(post => post.comments.length > 0);
+    }
+
+    // Validate all posts are properly formatted
+    function validateAllPosts() {
+      return posts.every(post => post.content.trim() !== '' && post.likes >= 0);
+    }
+
+    // Sort posts by number of likes
+    function sortPostsByLikes() {
+      posts.sort((a, b) => b.likes - a.likes);
+      renderPosts();
+    }
+
+    // Sort posts by date
+    function sortPostsByDate() {
+      posts.sort((a, b) => b.date - a.date);
+      renderPosts();
+    }
+
+    // Initial render
+    renderPosts();
+  </script>
+
+</body>
+</html>
